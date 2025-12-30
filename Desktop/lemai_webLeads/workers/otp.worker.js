@@ -1,19 +1,30 @@
+import "../config/env.js";
 import { Worker } from "bullmq";
 import redis from "../utils/redis.js";
 import { sendEmail } from "../utils/email.js";
 
+
+
 new Worker(
   "otp-queue",
-  async (job) => {
-    const { email, otp } = job.data;
+  async job => {
+    try {
+      const { email, code } = job.data;
 
-    await sendEmail({
-      to: email,
-      subject: "Your OTP Code",
-      text: `Your OTP is ${otp}`
-    });
+      await sendEmail({
+        to: email,
+        subject: "Your OTP Code",
+        otp: code,
+      });
+
+      console.log("OTP Email sent:", email);
+      return true;
+
+    } catch (err) {
+      console.error("EMAIL FAILED:", err.response?.body || err.message);
+      throw err;
+    }
   },
   { connection: redis }
 );
 
-console.log("OTP Worker Running");

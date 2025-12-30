@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
     try {
         // Initialize DB (authenticate + create tables)
         await initDB();
-        console.log("MySQL initialized via models/index.js");
+        console.log("MySQL initialized");
 
         // Start Server
         app.listen(PORT, () => console.log("Server running on", PORT));

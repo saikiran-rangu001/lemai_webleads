@@ -1,7 +1,8 @@
+import "../config/env.js";
 import { Worker } from "bullmq";
-import redis from "../utils/redis.js";
 import db from "../config/database.js";
 import axios from "axios";
+import redis from "../utils/redis.js";
 
 new Worker(
   "lead-queue",
@@ -17,7 +18,7 @@ new Worker(
       await axios.post(process.env.CRM_API_URL, {
         email: lead.email,
         name: lead.name,
-        phone: lead.phone
+        phone: lead.full_phone
       });
 
       await db.query(

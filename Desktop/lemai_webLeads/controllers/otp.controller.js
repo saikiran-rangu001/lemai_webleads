@@ -1,23 +1,35 @@
-import * as otpService from "../services/otp.service.js";
+import { sendOtpService, verifyOtpService } from "../services/otp.service.js";
 
 export const sendOtp = async (req, res) => {
-  const { email } = req.body;
+  try {
+    await sendOtpService(req.body.email);
 
-  if (!email) return res.status(400).json({ message: "Email required" });
+    res.json({
+      success: true,
+      message: "OTP sent successfully"
+    });
 
-  await otpService.generateOtp(email);
-  res.json({ message: "OTP Sent" });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message
+    });
+  }
 };
 
 export const verifyOtp = async (req, res) => {
-  const { email, otp } = req.body;
+  try {
+    await verifyOtpService(req.body.email, req.body.otp);
 
-  if (!email || !otp)
-    return res.status(400).json({ message: "Email & OTP required" });
+    res.json({
+      success: true,
+      message: "OTP verified"
+    });
 
-  const valid = await otpService.verifyOtp(email, otp);
-
-  if (!valid) return res.status(400).json({ message: "Invalid OTP" });
-
-  res.json({ message: "OTP Verified" });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message
+    });
+  }
 };

@@ -1,20 +1,38 @@
-import redis from "../utils/redis.js";
+import crypto from "crypto";
+import { saveOtp, getOtp, updateOtp } from "../utils/otpStore.js";
 import { otpQueue } from "../utils/queue.js";
 
-export const generateOtp = async (email) => {
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+export const sendOtpService = async (email) => {
+  const existing = await getOtp(email);
 
-  await redis.set(`otp:${email}`, otp, "EX", 300);
+  if (existing && !existing.verified) {
+    throw new Error("OTP already sent. Please wait.");
+  }
 
-  await otpQueue.add("send-otp", { email, otp });
+  const code = crypto.randomInt(100000, 999999).toString();
 
-  return otp;
+  await saveOtp(email, code);
+
+  await otpQueue.add("send-otp", { email, code });
+
+  return true;
 };
 
-export const verifyOtp = async (email, otp) => {
-  const stored = await redis.get(`otp:${email}`);
-  if (!stored || stored !== otp) return false;
+export const verifyOtpService = async (email, otp) => {
+  const data = await getOtp(email);
 
-  await redis.del(`otp:${email}`);
+  if (!data) throw new Error("OTP expired or not requested");
+
+  if (data.attempts >= 5) throw new Error("Too many attempts");
+
+  if (data.code !== otp) {
+    data.attempts += 1;
+    await updateOtp(email, data);
+    throw new Error("Invalid OTP");
+  }
+
+  data.verified = true;
+  await updateOtp(email, data);
+
   return true;
 };

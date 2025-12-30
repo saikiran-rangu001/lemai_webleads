@@ -2,8 +2,8 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import rateLimiter from "./middlewares/rateLimiter.js";
-import otpRoutes from "./routes/otp.routes.js";
-import leadRoutes from "./routes/lead.routes.js";
+import routes from "./routes/index.js";
+import cors from "cors";
 
 const app = express();
 
@@ -11,9 +11,17 @@ app.use(express.json());
 app.use(helmet());
 app.use(morgan("tiny"));
 app.use(rateLimiter);
+app.use(cors({
+  origin: [
+    "http://127.0.0.1:5500",   
+    "https://lemai.com"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
-app.use("/api/v1/otp", otpRoutes);
-app.use("/api/v1/leads", leadRoutes);
+// Single source of truth for API base
+app.use("/api/v1", routes);
 
 app.get("/", (req, res) => res.send("Lead System Running"));
 

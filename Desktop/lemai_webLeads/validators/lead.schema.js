@@ -26,7 +26,7 @@ export const leadSchema = {
 
     sales_team_size: {
       type: "string",
-      enum: ["0-5","5-10","10-25","25-50","50-100","Above 100"],
+      enum: ["0-5", "5-10", "10-25", "25-50", "50-100", "Above 100"],
       nullable: true
     },
 
@@ -34,10 +34,10 @@ export const leadSchema = {
       type: "string",
       enum: [
         "Google Search",
-        "FB & Instagram",
+        "FaceBook & Instagram",
         "Social Media",
         "Reference",
-        "Inf",
+        "Influencer",
         "Others"
       ],
       nullable: true

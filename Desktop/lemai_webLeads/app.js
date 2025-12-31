@@ -4,6 +4,7 @@ import morgan from "morgan";
 import rateLimiter from "./middlewares/rateLimiter.js";
 import routes from "./routes/index.js";
 import cors from "cors";
+import bullBoard from "./dashboard/bullBoard.js";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(cors({
 
 // Single source of truth for API base
 app.use("/api/v1", routes);
+app.use("/admin/queues", bullBoard.getRouter());
 
 app.get("/", (req, res) => res.send("Lead System Running"));
 

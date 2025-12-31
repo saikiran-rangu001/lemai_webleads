@@ -7,14 +7,19 @@
     "dev": "nodemon server.js",
     "worker:otp": "nodemon workers/otp.worker.js",
     "worker:lead": "nodemon workers/lead.worker.js",
-    "dev:all": "concurrently \"npm run dev\" \"npm run worker:otp\" \"npm run worker:lead\""
+    "dev:all": "concurrently \"npm run dev\" \"npm run worker:otp\" \"npm run worker:lead\"",
+    "start": "node server.js"
   },
   "dependencies": {
+    "@bull-board/api": "^6.16.2",
+    "@bull-board/express": "^6.16.2",
     "@sendgrid/mail": "^8.1.6",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "axios": "^1.13.2",
-    "bullmq": "^5.66.2",
+    "bull-board": "^1.7.2",
+    "bullmq": "^5.66.4",
+    "concurrently": "^9.2.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
@@ -25,5 +30,9 @@
     "mysql2": "^3.16.0",
     "nodemon": "^3.1.11",
     "sequelize": "^6.37.7"
-  }
+  },
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

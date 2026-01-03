@@ -84,7 +84,20 @@ export const saveAndQueueLead = async (data) => {
     // deleting otp after successful lead submission
     await deleteOtp(data.email);
 
-    await leadQueue.add("crm-sync", { leadId: lead.id });
+    await leadQueue.add(
+        "crm-sync",
+        { leadId: lead.id },
+        {
+            attempts: 8, 
+            backoff: {
+                type: "exponential",
+                delay: 10000 // 10s → 20s → 40s → 80s ...
+            },
+            removeOnComplete: true,
+            removeOnFail: false, // keep failed leads visible
+            timeout: 60000 // 60s
+        }
+    );
 
     return lead.id;
 };

@@ -13,7 +13,20 @@ export const sendOtpService = async (email) => {
 
   await saveOtp(email, code);
 
-  await otpQueue.add("send-otp", { email, code });
+  await otpQueue.add(
+    "send-otp",
+    { email, code },
+    {
+      attempts: 5,
+      backoff: {
+        type: "exponential",
+        delay: 5000   // retries after 5s, then 10s, 20s...
+      },
+      removeOnComplete: true,
+      removeOnFail: false
+    }
+  );
+
 
   return true;
 };
